@@ -1,0 +1,26 @@
+version: '3'
+services:
+  openresty:
+      image: registry.cn-hangzhou.aliyuncs.com/otome/openresty
+      restart: always
+      tty: true
+      volumes:
+        - ./openresty/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      ports:
+        - 8001:80
+      networks:
+        - web2
+  ssdb:
+      image: registry.cn-hangzhou.aliyuncs.com/otome/ssdb
+      restart: always
+      tty: true
+      volumes:
+        - ./ssdb/ssdb.conf:/usr/local/ssdb/ssdb.conf
+      ports:
+        - 8002:8888
+      networks:
+        - web2
+
+networks: 
+  web2:
+    driver: bridge
