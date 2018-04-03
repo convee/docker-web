@@ -1,7 +1,7 @@
 version: '3'
 services:
   openresty:
-      image: registry.cn-hangzhou.aliyuncs.com/otome/openresty
+      image: openresty/openresty:1.13.6.1-alpine
       restart: always
       tty: true
       volumes:
@@ -9,18 +9,51 @@ services:
       ports:
         - 8001:80
       networks:
-        - web2
+        - web
+  java:
+      build:
+        context: ./java
+        args:
+          JAR_FILE: demo-0.0.1-SNAPSHOT.jar
+      restart: always
+      tty: true
+      ports:
+        - 8101:8080
+      networks:
+        - web
   ssdb:
-      image: registry.cn-hangzhou.aliyuncs.com/otome/ssdb
+      build:
+        context: ./ssdb
       restart: always
       tty: true
       volumes:
         - ./ssdb/ssdb.conf:/usr/local/ssdb/ssdb.conf
       ports:
-        - 8002:8888
+        - 8201:8888
       networks:
-        - web2
+        - web
+  ssdb2:
+      build:
+        context: ./ssdb
+      restart: always
+      tty: true
+      volumes:
+        - ./ssdb/ssdb.conf:/usr/local/ssdb/ssdb.conf
+      ports:
+        - 8202:8888
+      networks:
+        - web
+  ssdb-admin:
+      build:
+        context: ./ssdb-admin
+      command: python app.py
+      restart: always
+      tty: true
+      ports:
+        - 8401:5000
+      networks:
+        - web
 
 networks: 
-  web2:
+  web:
     driver: bridge
